@@ -3,13 +3,14 @@ var router = express.Router();
 const mysql = require('./../mysql/mysqlUtil');
 
 /* GET home page. */
+// 获取banner列表
 router.get('/getBanner', function(req, res, next) {
   mysql('select * from banner', function(err, data) {
     if (err) return res.json(err)
     res.json(data)
   })
 })
-
+// 添加banner
 router.post('/insert', function(req, res, next) {
   let url = req.body.url;
   let createTime = new Date();
@@ -18,6 +19,19 @@ router.post('/insert', function(req, res, next) {
     if (err) return res.json(err)
     if (data.affectedRows === 1) {
       res.json({code: 200, message: '添加成功'})
+    }
+  })
+})
+// 修改banner
+router.post('/edit', function(req, res, next) {
+  let bannerId = req.body.id;
+  let url = req.body.url;
+  let createTime = new Date();
+  let status = req.status;
+  mysql('update banner set url=?, createTime=?, status=? where id=?', [url, createTime, status, bannerId], function(err, data) {
+    if (err) return res.json(err);
+    if (data.affectedRows === 1) {
+      res.json({code: 200, message: '修改成功'})
     }
   })
 })

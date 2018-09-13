@@ -5,27 +5,21 @@ var STS = OSS.STS;
 var co = require('co');
 
 var sts = new STS({
-	accessKeyId: 'LTAI5d5SNCZdsd9n5G',
-	accessKeySecret: 'NU9RE6ssRlj5QnQB3LvfjZCsNLzpWAsf',
+	accessKeyId: 'LTAIFOVERjHNxsJU',
+	accessKeySecret: 'xF9xWjqSyFiINibY1ClDvwiZbdaTcC',
 });
-var rolearn = 'acs:ram::1308832347557048:role/ramuploadonly';
+var rolearn = 'acs:ram::1396335964037612:role/user';
 
 var policy = {
-	"Version": "1",
 	"Statement": [
-	{
+	  {
+		"Action": "sts:AssumeRole",
 		"Effect": "Allow",
-		"Action": [
-		"oss:GetObject",
-		"oss:PutObject"
-		],
-		"Resource": [
-		"acs:oss:*:*:upload",
-		"acs:oss:*:*:upload/*"
-		]
-	}
-	]
-};
+		"Resource": "acs:ram::1396335964037612:role/ramtestappwrite"
+	  }
+	],
+	"Version": "1"
+  }
 
 class Service {
 
@@ -37,6 +31,7 @@ class Service {
 			})
 		}).catch(function (err) {
 		});
+		console.log(result)
 	}
 }
 

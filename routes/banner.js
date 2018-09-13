@@ -5,7 +5,16 @@ const mysql = require('./../mysql/mysqlUtil');
 /* GET home page. */
 // 获取banner列表
 router.get('/getBanner', function(req, res, next) {
-  mysql('select * from banner', function(err, data) {
+  let skip = Number(req.query.skip);
+  let limit = Number(req.query.limit);
+  mysql('select * from banner limit ?, ?', [skip, limit], function(err, data) {
+    if (err) return res.json(err)
+    res.json(data)
+  })
+})
+// 获取banner数量
+router.get('/countBanner', function(req, res, next) {
+  mysql('select count(*) as count from banner', function(err, data) {
     if (err) return res.json(err)
     res.json(data)
   })
@@ -27,7 +36,7 @@ router.post('/edit', function(req, res, next) {
   let bannerId = req.body.id;
   let url = req.body.url;
   let createTime = new Date();
-  let status = req.status;
+  let status = req.body.status;
   mysql('update banner set url=?, createTime=?, status=? where id=?', [url, createTime, status, bannerId], function(err, data) {
     if (err) return res.json(err);
     if (data.affectedRows === 1) {

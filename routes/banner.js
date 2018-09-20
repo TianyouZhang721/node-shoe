@@ -5,8 +5,8 @@ const mysql = require('./../mysql/mysqlUtil');
 /* GET home page. */
 // 获取banner列表
 router.get('/getBanner', function(req, res, next) {
-  let skip = Number(req.query.skip);
-  let limit = Number(req.query.limit);
+  let skip = Number(req.query.skip) || 0;
+  let limit = Number(req.query.limit) || 5;
   mysql('select * from banner limit ?, ?', [skip, limit], function(err, data) {
     if (err) return res.json(err)
     res.json(data)

@@ -31,4 +31,15 @@ router.post('/edit', function(req, res, next) {
         }
     })
 })
+router.post('/insert', function(req, res, next) {
+    let url = req.body.url;
+    let title = req.body.title;
+    let status = '1';
+    mysql("insert into class(id, url, title, status) values(null, ?, ?, ?)", [url, title, status], function(err, data) {
+        if (err) return res.json(err)
+        if (data.affectedRows === 1) {
+            res.json({code: 200, message: '添加成功'})
+        }
+    })
+})
 module.exports = router;

@@ -31,6 +31,7 @@ router.post('/edit', function(req, res, next) {
         }
     })
 })
+// 添加大类
 router.post('/insert', function(req, res, next) {
     let url = req.body.url;
     let title = req.body.title;

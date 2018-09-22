@@ -9,6 +9,7 @@ var bannerRouter = require('./routes/banner');
 var usersRouter = require('./routes/users');
 var uploadRouter = require('./routes/upload');
 var classRouter = require('./routes/first-class');
+var shoesRouter = require('./routes/shoes');
 
 var app = express();
 app.use(cors());
@@ -33,6 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/banner', bannerRouter);
 app.use('/upload', uploadRouter);
 app.use('/first-class', classRouter);
+app.use('/shoes', shoesRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

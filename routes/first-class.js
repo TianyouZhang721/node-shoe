@@ -21,10 +21,15 @@ router.get('/countClass', function(req, res, next) {
 // 修改大类
 router.post('/edit', function(req, res, next) {
     let classId = req.body.id;
-    let url = req.body.url;
-    let status = req.body.status;
-    let title = req.body.title;
-    mysql("update class set url=?, status=?, title=? where id=?", [url, status, title, classId], function(err, data) {
+    let url = req.body.url || null;
+    let status = req.body.status || null;
+    let title = req.body.title || null;
+    let arr = [];
+    if (url) arr.push(url);
+    if (status) arr.push(status);
+    if (title) arr.push(title);
+    arr.push(classId);
+    mysql(`update class set ${url ? 'url=?,': ''} ${status ? 'status=?,' : ''} ${title ? 'title=?' : ''} where id=?`, arr, function(err, data) {
         if (err) return res.json(err);
         if (data.affectedRows === 1) {
             res.json({code: 200, message: '修改成功'})

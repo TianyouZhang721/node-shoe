@@ -3,25 +3,27 @@ var router = express.Router();
 const mysql = require('./../mysql/mysqlUtil');
 
 // 获取商品数量
-router.get('/count', function(req, req, next) {
-    let classificationId = req.query.classificationId;
-    mysql('select count(*) as count from shoes where classificationId=?', [classificationId], function(err, data) {
+router.get('/count', function(req, res, next) {
+    let classificationId = req.query.classificationId || null;
+    let arr = classificationId ? [classificationId] : [];
+    mysql(`select count(*) as count from shoes ${classificationId ? 'where classificationId=' : ''}`, arr, function(err, data) {
         if (err) return res.json(err)
         res.json(data)
     })
 })
 // 获取商品列表
-router.get('/shoeList', function(res, req, next) {
-    let classificationId = req.query.classificationId;
+router.get('/shoeList', function(req, res, next) {
+    let classificationId = req.query.classificationId || null;
     let skip = req.query.skip || 0;
     let limit = req.query.limit || 10;
-    mysql("select * from shoes where classificationId=? limit ?, ?", [classificationId, skip, limit], function(err, data) {
+    let arr = classificationId ? [classificationId, skip, limit] : [skip, limit]
+    mysql(`select * from shoes ${classificationId ? 'where classificationId=?' : ''} limit ?, ?`, arr, function(err, data) {
         if (err) return res.json(err);
         res.json(data)
     })
 })
 // 编辑商品
-router.post('/edit', function(res, req, next) {
+router.post('/edit', function(req, res, next) {
     let shoeId = req.body.id;
     let url = req.body.url;
     let title = req.body.title;
@@ -33,7 +35,19 @@ router.post('/edit', function(res, req, next) {
     let buyer = req.body.buyer;
     let createTime = new Date();
     let status = req.body.status;
-    mysql("update shoes set url=?, title=?, price=?, size=?, pic=?, detail=?, classificationId=?, buyer=?, status=?, createTime=? where id=?", [url, title, price, size, pics, detail, classificationId, buyer, status, createTime, shoeId], function(err, data) {
+    let arr = [];
+    if (url) arr.push(url)
+    if (title) arr.push(title)
+    if (price) arr.push(price)
+    if (size) arr.push(size)
+    if (pics) arr.push(pics)
+    if (detail) arr.push(detail)
+    if (classificationId) arr.push(classificationId)
+    if (buyer) arr.push(buyer)
+    if (status) arr.push(status)
+    arr.push(createTime)
+    arr.push(shoeId)
+    mysql(`update shoes set ${url ? 'url=?,': ''} ${title ? 'title=?,' : ''} ${price ? 'price=?,' : ''} ${size ? 'size=?,' : ''} ${pics ? 'pic=?,' : ''} ${detail ? 'detail=?,' : ''} ${classificationId ? 'classificationId=?,' : ''} ${buyer ? 'buyer=?,' : ''} ${status ? 'status=?,' : ''} createTime=? where id=?`, arr, function(err, data) {
         if (err) return res.json(err)
         if (data.affectedRows=== 1) {
             res.json({
@@ -45,7 +59,7 @@ router.post('/edit', function(res, req, next) {
 })
 
 // 新增商品
-router.post('/create', function(res, req, next) {
+router.post('/create', function(req, res, next) {
     let url = req.body.url;
     let title = req.body.title;
     let price = req.body.price;

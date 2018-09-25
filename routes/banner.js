@@ -34,10 +34,15 @@ router.post('/insert', function(req, res, next) {
 // 修改banner
 router.post('/edit', function(req, res, next) {
   let bannerId = req.body.id;
-  let url = req.body.url;
+  let url = req.body.url || null;
   let createTime = new Date();
-  let status = req.body.status;
-  mysql('update banner set url=?, createTime=?, status=? where id=?', [url, createTime, status, bannerId], function(err, data) {
+  let status = req.body.status || null;
+  let arr = [];
+  if (url) arr.push(url)
+  if (status) arr.push(status)
+  arr.push(createTime)
+  arr.push(bannerId)
+  mysql(`update banner set ${url ? 'url=?,' : ''} ${status ? 'status=?,' : ''} createTime=?  where id=?`, arr, function(err, data) {
     if (err) return res.json(err);
     if (data.affectedRows === 1) {
       res.json({code: 200, message: '修改成功'})
